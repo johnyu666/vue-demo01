@@ -30,7 +30,7 @@
                 :data="books"
                 style="width: 80%">
             <el-table-column
-                    prop="id"
+                    prop="_id"
                     label="ID"
                     width="180">
             </el-table-column>
@@ -60,32 +60,45 @@
 </template>
 
 <script>
-    import _ from 'lodash'
+
     export default {
         name: "BookManger",
-        data(){
+        created() {
+            fetch(this.url, {type: "GET"})
+                .then(res => res.json())
+                .then(bks => this.books = bks)
+        },
+        data() {
             return {
-                maxId:2,
-                book:{name:'',price:''},
-                dialogVisible:false,
-                books:[{id:1,name:"book1",price:200},
-                    {id:2,name:"book2",price:230}]
+                url: "http://localhost:3000/books",
+                maxId: 2,
+                book: {name: '', price: ''},
+                dialogVisible: false,
+                books: []
             }
         },
-        methods:{
-            deleteBook(book){
-                let index=this.books.findIndex(item=>item.id==book.id)
-                this.books.splice(index,1)
+        methods: {
+            deleteBook(book) {
+                fetch(this.url+"/"+book._id,{method:"DELETE"})
+                    .then(res=>res.json())
+                    .then(()=>{
+                        let index = this.books.findIndex(item => item._id == book._id)
+                        this.books.splice(index, 1)
+                    })
+
+
             },
-            addBook(){
-                this.book.id=++this.maxId
-                let bk=_.cloneDeep(this.book)
-                this.books.push(bk)
+            addBook() {
+                fetch(this.url, {
+                    method: "POST", headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(this.book)
+                }).then(res=>res.json())
+                    .then(nb=>this.books.push(nb))
             }
         },
-        computed:{
-            priceTotal(){
-                return this.books.reduce((prev,book)=>prev+book.price,0)
+        computed: {
+            priceTotal() {
+                return this.books.reduce((prev, book) => prev + book.price, 0)
             }
         }
     }
