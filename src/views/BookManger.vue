@@ -48,7 +48,7 @@
                     label="操作"
                     width="100">
                 <template slot-scope="book">
-                    <el-button @click="deleteBook(book)" type="text" size="small">删除</el-button>
+                    <el-button @click="deleteBook(book.row)" type="text" size="small">删除</el-button>
                     <el-button @click="dialogVisible=true" type="text" size="small">编辑</el-button>
                 </template>
             </el-table-column>
@@ -70,7 +70,7 @@
         },
         data() {
             return {
-                url: "http://localhost:3000/books",
+                url: "http://39.100.119.199:3000/books",
                 maxId: 2,
                 book: {name: '', price: ''},
                 dialogVisible: false,
